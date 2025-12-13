@@ -16,4 +16,4 @@ Thumbs.db
 npm-debug.log*
 dist/
 build/
-upload_images/
+upload_images/.env 
