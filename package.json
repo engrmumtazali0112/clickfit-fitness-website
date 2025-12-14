@@ -4,21 +4,12 @@
   "description": "ClickFit Fitness Platform",
   "main": "server/server.js",
   "scripts": {
-    "start": "node server/server.js",
-    "dev": "nodemon server/server.js"
-  },
-  "dependencies": {
-    "axios": "^1.13.2",
-    "cloudinary": "^2.8.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^4.18.2",
-    "multer": "^1.4.5-lts.2",
-    "mysql2": "^3.15.3",
-    "nodemon": "^3.1.11",
-    "streamifier": "^0.1.1"
+    "start": "cd server && npm start",
+    "dev": "cd server && npm run dev",
+    "install-server": "cd server && npm install",
+    "vercel-build": "cd server && npm install"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "24.x"
   }
 }
