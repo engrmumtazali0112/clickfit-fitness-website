@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Endpoint Tester - ClickFit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #2C3E50, #34495E);
+            min-height: 100vh;
+            padding: 30px 0;
+        }
+        .endpoint-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .endpoint-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .method-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .method-get { background: #d4edda; color: #155724; }
+        .method-post { background: #cce5ff; color: #004085; }
+        .method-delete { background: #f8d7da; color: #721c24; }
+        .test-btn {
+            width: 100%;
+            border-radius: 25px;
+            font-weight: bold;
+            padding: 10px;
+        }
+        .response-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .status-success { color: #28a745; font-weight: bold; }
+        .status-error { color: #dc3545; font-weight: bold; }
+        .header-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-section text-center">
+            <h1 class="mb-3">
+                <i class="fas fa-flask text-primary me-2"></i>
+                ClickFit API Tester
+            </h1>
+            <p class="lead text-muted mb-3">Test all REST API endpoints in real-time</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <span class="badge bg-success px-4 py-2">
+                    <i class="fas fa-server me-2"></i>Server: localhost:3000
+                </span>
+                <span id="connectionStatus" class="badge bg-secondary px-4 py-2">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Checking...
+                </span>
+            </div>
+        </div>
+
+        <!-- Test All Button -->
+        <div class="text-center mb-4">
+            <button id="testAllBtn" class="btn btn-primary btn-lg px-5" onclick="testAllEndpoints()">
+                <i class="fas fa-play-circle me-2"></i>Test All Endpoints
+            </button>
+        </div>
+
+        
+        <!-- Endpoints -->
+        <div class="row">
+            <!-- 1. Root Endpoint -->
+            <div class="col-lg-6">
+                <div class="endpoint-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-home text-primary me-2"></i>Root Endpoint
+                        </h5>
+                        <span class="method-badge method-get">GET</span>
+                    </div>
+                    <p class="text-muted mb-3">Server status and features</p>
+                    <div class="mb-3">
+                        <strong>URL:</strong>
+                        <code>http://localhost:3000/</code>
+                    </div>
+                    <button class="btn btn-primary test-btn" onclick="testEndpoint('/', 'GET', 'root')">
+                        <i class="fas fa-play me-2"></i>Test Endpoint
+                    </button>
+                    <div id="root-response" class="response-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- 2. Health Check -->
+            <div class="col-lg-6">
+                <div class="endpoint-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-heartbeat text-success me-2"></i>Health Check
+                        </h5>
+                        <span class="method-badge method-get">GET</span>
+                    </div>
+                    <p class="text-muted mb-3">System health status</p>
+                    <div class="mb-3">
+                        <strong>URL:</strong>
+                        <code>http://localhost:3000/health</code>
+                    </div>
+                    <button class="btn btn-success test-btn" onclick="testEndpoint('/health', 'GET', 'health')">
+                        <i class="fas fa-play me-2"></i>Test Endpoint
+                    </button>
+                    <div id="health-response" class="response-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- 3. Get All Users -->
+            <div class="col-lg-6">
+                <div class="endpoint-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users text-info me-2"></i>Get All Users
+                        </h5>
+                        <span class="method-badge method-get">GET</span>
+                    </div>
+                    <p class="text-muted mb-3">Retrieve all users from database</p>
+                    <div class="mb-3">
+                        <strong>URL:</strong>
+                        <code>http://localhost:3000/api/users</code>
+                    </div>
+                    <button class="btn btn-info test-btn text-white" onclick="testEndpoint('/api/users', 'GET', 'users')">
+                        <i class="fas fa-play me-2"></i>Test Endpoint
+                    </button>
+                    <div id="users-response" class="response-box" style="display: none;"></div>
+                </div>
+            </div>
+
+        
+
+            <!-- 5. Create User -->
+            <div class="col-lg-6">
+                <div class="endpoint-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-plus text-primary me-2"></i>Create User
+                        </h5>
+                        <span class="method-badge method-post">POST</span>
+                    </div>
+                    <p class="text-muted mb-3">Add new user to database</p>
+                    <div class="mb-3">
+                        <strong>URL:</strong>
+                        <code>http://localhost:3000/api/users</code>
+                    </div>
+                    <div class="mb-2">
+                        <input type="email" id="createEmail" class="form-control mb-2" placeholder="Email" value="test@example.com">
+                        <input type="password" id="createPassword" class="form-control mb-2" placeholder="Password" value="password123">
+                        <select id="createType" class="form-select">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                            <option value="trainer">Trainer</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary test-btn" onclick="testCreateUser()">
+                        <i class="fas fa-play me-2"></i>Test Endpoint
+                    </button>
+                    <div id="create-response" class="response-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- 6. Database Status -->
+            <div class="col-lg-6">
+                <div class="endpoint-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-database text-danger me-2"></i>Database Status
+                        </h5>
+                        <span class="method-badge method-get">GET</span>
+                    </div>
+                    <p class="text-muted mb-3">Check database connection</p>
+                    <div class="mb-3">
+                        <strong>URL:</strong>
+                        <code>http://localhost:3000/api/db-status</code>
+                    </div>
+                    <button class="btn btn-danger test-btn" onclick="testEndpoint('/api/db-status', 'GET', 'dbstatus')">
+                        <i class="fas fa-play me-2"></i>Test Endpoint
+                    </button>
+                    <div id="dbstatus-response" class="response-box" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div id="summaryCard" class="endpoint-card mt-4" style="display: none;">
+            <h4 class="mb-3">
+                <i class="fas fa-chart-bar me-2"></i>Test Summary
+            </h4>
+            <div id="summaryContent"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let testResults = [];
+
+        // Check connection on load
+        $(document).ready(async function() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    $('#connectionStatus').removeClass('bg-secondary').addClass('bg-success')
+                        .html('<i class="fas fa-check-circle me-2"></i>Connected');
+                } else {
+                    throw new Error('Not connected');
+                }
+            } catch (error) {
+                $('#connectionStatus').removeClass('bg-secondary').addClass('bg-danger')
+                    .html('<i class="fas fa-times-circle me-2"></i>Offline');
+            }
+        });
+
+        // Test endpoint
+        async function testEndpoint(endpoint, method, id) {
+            const responseDiv = $(`#${id}-response`);
+            responseDiv.show().html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Testing...</div>');
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, { method });
+                const data = await response.json();
+                
+                const statusClass = response.ok ? 'status-success' : 'status-error';
+                const statusText = response.ok ? '✅ SUCCESS' : '❌ ERROR';
+                
+                responseDiv.html(`
+                    <div class="${statusClass} mb-2">${statusText} (${response.status})</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `);
+
+                testResults.push({ endpoint, status: response.ok ? 'pass' : 'fail' });
+            } catch (error) {
+                responseDiv.html(`
+                    <div class="status-error mb-2">❌ REQUEST FAILED</div>
+                    <pre>Error: ${error.message}</pre>
+                `);
+                testResults.push({ endpoint, status: 'fail' });
+            }
+        }
+
+        // Test get user by ID
+        async function testGetUserById() {
+            const userId = $('#userIdInput').val();
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+            await testEndpoint(`/api/users/${userId}`, 'GET', 'userid');
+        }
+
+        // Test create user
+        async function testCreateUser() {
+            const email = $('#createEmail').val();
+            const password = $('#createPassword').val();
+            const type = $('#createType').val();
+
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const responseDiv = $('#create-response');
+            responseDiv.show().html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Testing...</div>');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, type, active: true })
+                });
+
+                const data = await response.json();
+                const statusClass = response.ok ? 'status-success' : 'status-error';
+                const statusText = response.ok ? '✅ SUCCESS' : '❌ ERROR';
+                
+                responseDiv.html(`
+                    <div class="${statusClass} mb-2">${statusText} (${response.status})</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `);
+
+                testResults.push({ endpoint: '/api/users (POST)', status: response.ok ? 'pass' : 'fail' });
+            } catch (error) {
+                responseDiv.html(`
+                    <div class="status-error mb-2">❌ REQUEST FAILED</div>
+                    <pre>Error: ${error.message}</pre>
+                `);
+                testResults.push({ endpoint: '/api/users (POST)', status: 'fail' });
+            }
+        }
+
+        // Test all endpoints
+        async function testAllEndpoints() {
+            testResults = [];
+            $('#testAllBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Testing...');
+
+            await testEndpoint('/', 'GET', 'root');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testEndpoint('/health', 'GET', 'health');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testEndpoint('/api/users', 'GET', 'users');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testEndpoint('/api/db-status', 'GET', 'dbstatus');
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Show summary
+            const passed = testResults.filter(r => r.status === 'pass').length;
+            const failed = testResults.filter(r => r.status === 'fail').length;
+            
+            $('#summaryContent').html(`
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h2 class="text-primary">${testResults.length}</h2>
+                        <p>Total Tests</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2 class="text-success">${passed}</h2>
+                        <p>Passed</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2 class="text-danger">${failed}</h2>
+                        <p>Failed</p>
+                    </div>
+                </div>
+            `);
+            $('#summaryCard').show();
+
+            $('#testAllBtn').prop('disabled', false).html('<i class="fas fa-play-circle me-2"></i>Test All Endpoints');
+        }
+    </script>
+</body>
+</html>

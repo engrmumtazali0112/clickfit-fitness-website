@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "clickfit-server",
   "version": "1.0.0",
   "description": "Backend server for ClickFit fitness website",
@@ -26,8 +27,23 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
+=======
+  "name": "clickfit",
+  "version": "1.0.0",
+  "description": "ClickFit Fitness Platform",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "cd server && npm start",
+    "dev": "cd server && npm run dev",
+    "install-server": "cd server && npm install",
+    "vercel-build": "cd server && npm install"
+>>>>>>> 38b153e8ecf8bd324cdb78589427643ad64d30c5
   },
   "engines": {
     "node": "24.x"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 38b153e8ecf8bd324cdb78589427643ad64d30c5

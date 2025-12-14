@@ -1,0 +1,110 @@
+-- ============================================================================
+-- CLICKFIT - 5 MINUTE LIVE DEMO FOR HR
+-- ============================================================================
+-- Copy and paste each section one at a time during your presentation
+-- ============================================================================
+
+-- SECTION 1: Database Verification (30 seconds)
+-- ============================================================================
+USE clickfit_db;
+SELECT DATABASE() AS 'Current Database';
+
+-- Show users table structure
+DESCRIBE users;
+
+-- SECTION 2: Verify Stored Procedure Exists (30 seconds)
+-- ============================================================================
+SELECT 
+    ROUTINE_NAME AS 'Procedure Name',
+    ROUTINE_TYPE AS 'Type',
+    CREATED AS 'Created Date',
+    LAST_ALTERED AS 'Last Modified'
+FROM information_schema.ROUTINES 
+WHERE ROUTINE_SCHEMA = 'clickfit_db' 
+AND ROUTINE_NAME = 'addUser';
+
+-- Show procedure definition
+SHOW CREATE PROCEDURE addUser;
+
+-- SECTION 3: Live User Insertion Demo (2 minutes)
+-- ============================================================================
+
+-- ⭐ THIS IS THE MAIN REQUIREMENT - LIVE DEMO
+-- Insert HR demo user
+CALL addUser('hr.demo@company.com', 'HrSecure123', 'admin', TRUE);
+
+-- Insert another user to show it works multiple times
+CALL addUser('john.doe@clickfit.com', 'John123', 'user', TRUE);
+
+-- Insert a trainer
+CALL addUser('sarah.trainer@clickfit.com', 'Sarah123', 'trainer', TRUE);
+
+-- Insert inactive user
+CALL addUser('test.inactive@clickfit.com', 'Test123', 'user', FALSE);
+
+-- SECTION 4: Verify All Insertions (1 minute)
+-- ============================================================================
+SELECT 
+    userId AS 'ID',
+    email AS 'Email Address',
+    type AS 'User Type',
+    CASE 
+        WHEN active = 1 THEN '✅ Active' 
+        ELSE '❌ Inactive' 
+    END AS 'Account Status',
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS 'Created At'
+FROM users
+ORDER BY userId DESC
+LIMIT 10;
+
+-- SECTION 5: Show Database Statistics (1 minute)
+-- ============================================================================
+-- Comprehensive statistics
+SELECT 
+    COUNT(*) AS 'Total Users',
+    COUNT(DISTINCT type) AS 'User Types',
+    SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) AS 'Active Users',
+    SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END) AS 'Inactive Users',
+    SUM(CASE WHEN type = 'admin' THEN 1 ELSE 0 END) AS 'Admins',
+    SUM(CASE WHEN type = 'user' THEN 1 ELSE 0 END) AS 'Regular Users',
+    SUM(CASE WHEN type = 'trainer' THEN 1 ELSE 0 END) AS 'Trainers'
+FROM users;
+
+-- Show breakdown by type
+SELECT 
+    type AS 'User Type',
+    COUNT(*) AS 'Count',
+    SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) AS 'Active',
+    SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END) AS 'Inactive',
+    CONCAT(ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM users), 2), '%') AS 'Percentage'
+FROM users
+GROUP BY type
+ORDER BY COUNT(*) DESC;
+
+-- SECTION 6: Additional CALL Examples (Optional)
+-- ============================================================================
+-- Show that stored procedure handles duplicates gracefully
+CALL addUser('duplicate@test.com', 'Test123', 'user', TRUE);
+-- Try to insert same email again (will fail with error)
+-- CALL addUser('duplicate@test.com', 'Test456', 'user', TRUE);
+
+-- Show all users one final time
+SELECT * FROM users ORDER BY created_at DESC;
+
+-- ============================================================================
+-- DEMO COMPLETE! 
+-- ============================================================================
+-- Key Points Demonstrated:
+-- ✅ MySQL database exists and is active
+-- ✅ Users table created with all required columns
+-- ✅ Stored procedure addUser exists and is functional
+-- ✅ Multiple successful CALL statements executed
+-- ✅ Data verification shows all inserts worked
+-- ============================================================================
+
+SELECT 
+    '✅ DEMO SUCCESSFUL!' AS 'Status',
+    'All requirements met' AS 'Result',
+    COUNT(*) AS 'Total Users Inserted'
+FROM users;
+

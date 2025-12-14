@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClickFit - Image Upload Test 📸</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+        
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        #dropZone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        #dropZone:hover {
+            border-color: #764ba2;
+            background: #e9ecef;
+            transform: scale(1.02);
+        }
+        
+        #dropZone.dragover {
+            border-color: #50C878;
+            background: #d4edda;
+            border-style: solid;
+            transform: scale(1.05);
+        }
+        
+        .upload-icon {
+            font-size: 5rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .btn-upload {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 15px 50px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-upload:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+        
+        #uploadStatus {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        #uploadStatus.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        #uploadStatus.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        #uploadStatus.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+        
+        .image-preview-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .image-preview-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .image-preview-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+        
+        .image-preview-item:hover .image-overlay {
+            opacity: 1;
+        }
+        
+        .delete-btn {
+            background: #dc3545;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-3 fw-bold text-white mb-3">
+                <i class="fas fa-dumbbell me-3"></i>ClickFit
+            </h1>
+            <h2 class="text-white mb-2">📸 Image Upload Test</h2>
+            <p class="text-white-50">Drag & drop or click to upload images</p>
+        </div>
+
+        <div class="upload-card">
+            <div id="dropZone">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3 class="mb-3">Drag & Drop Images Here</h3>
+                <p class="text-muted mb-4">or click the button below</p>
+                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                <button id="browseBtn" class="btn btn-upload">
+                    <i class="fas fa-folder-open me-2"></i>Browse Files
+                </button>
+                <div class="mt-4">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Supports: JPG, PNG, GIF, WebP • Max 5MB each • 10 files max
+                    </small>
+                </div>
+            </div>
+            
+            <div id="uploadStatus"></div>
+        </div>
+
+        <div id="imagePreview" class="row g-4"></div>
+        
+        <div class="text-center mt-5">
+            <a href="/" class="btn btn-light btn-lg rounded-pill px-5">
+                <i class="fas fa-home me-2"></i>Back to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Upload Handler -->
+    <script src="js/upload-handler.js"></script>
+    
+    <script>
+        console.log('%c📸 ClickFit Upload Test Page', 'color: #667eea; font-size: 20px; font-weight: bold;');
+        console.log('%c✅ Upload handler loaded', 'color: #50C878; font-size: 14px;');
+        console.log('%c💡 Server URL: http://localhost:3001', 'color: #667eea; font-size: 14px;');
+    </script>
+</body>
+</html>

@@ -1,327 +1,243 @@
-// Image Upload Handler with Drag & Drop - FIXED VERSION
-
+// js/upload-handler.js - FIXED PORT 3000
 $(document).ready(function() {
-    
     const dropZone = $('#dropZone');
     const fileInput = $('#fileInput');
     const browseBtn = $('#browseBtn');
     const uploadStatus = $('#uploadStatus');
     const imagePreview = $('#imagePreview');
     
-    // Server URL - change this to match your server
-    const SERVER_URL = 'http://localhost:3000';
+    // ✅ FIXED: Use port 3000 to match server
+    const API_BASE = 'http://localhost:3000';
+    const MAX_FILES = 10;
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
     
-    // Click to browse files
-    browseBtn.on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    let uploadedFiles = [];
+
+    console.log('📤 Upload handler initialized - Using:', API_BASE);
+
+    // Click to browse
+    browseBtn.on('click', function() {
         fileInput.click();
     });
-    
-    // Click on drop zone to browse
-    dropZone.on('click', function(e) {
-        if (e.target === this || $(e.target).hasClass('fa-cloud-upload-alt') || $(e.target).is('h4') || $(e.target).is('p')) {
-            fileInput.click();
-        }
-    });
-    
-    // Handle file selection
+
+    // File input change
     fileInput.on('change', function(e) {
-        const files = e.target.files;
-        if (files.length > 0) {
-            handleFiles(files);
-        }
+        handleFiles(e.target.files);
     });
-    
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.on(eventName, function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        });
+
+    // Drag and drop events
+    dropZone.on('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('dragover');
     });
-    
-    // Highlight drop zone when item is dragged over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.on(eventName, function() {
-            $(this).addClass('dragover');
-        });
+
+    dropZone.on('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('dragover');
     });
-    
-    // Remove highlight when item leaves drop zone
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.on(eventName, function() {
-            $(this).removeClass('dragover');
-        });
-    });
-    
-    // Handle dropped files
+
     dropZone.on('drop', function(e) {
-        const dt = e.originalEvent.dataTransfer;
-        const files = dt.files;
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('dragover');
         
-        if (files.length > 0) {
-            handleFiles(files);
-        }
+        const files = e.originalEvent.dataTransfer.files;
+        handleFiles(files);
     });
-    
-    // Main function to handle files
+
     function handleFiles(files) {
-        // Convert FileList to Array
-        const fileArray = Array.from(files);
-        
-        // Filter only image files
-        const imageFiles = fileArray.filter(file => file.type.startsWith('image/'));
-        
-        if (imageFiles.length === 0) {
-            showStatus('error', 'Please select valid image files (JPG, PNG, GIF, etc.)');
+        if (files.length === 0) return;
+
+        if (uploadedFiles.length + files.length > MAX_FILES) {
+            showStatus(`Maximum ${MAX_FILES} files allowed!`, 'danger');
             return;
         }
+
+        uploadStatus.html('');
         
-        if (imageFiles.length > 10) {
-            showStatus('error', 'Maximum 10 images can be uploaded at once.');
-            return;
-        }
-        
-        // Show loading status
-        showStatus('loading', `Uploading ${imageFiles.length} image(s)...`);
-        
-        // Upload each file
-        let uploadedCount = 0;
-        imageFiles.forEach((file, index) => {
-            uploadFile(file, index, imageFiles.length, function() {
-                uploadedCount++;
-                if (uploadedCount === imageFiles.length) {
-                    showStatus('success', `Successfully uploaded ${imageFiles.length} image(s)!`);
-                }
-            });
+        Array.from(files).forEach(file => {
+            if (!file.type.startsWith('image/')) {
+                showStatus(`${file.name} is not an image file`, 'warning');
+                return;
+            }
+
+            if (file.size > MAX_SIZE) {
+                showStatus(`${file.name} exceeds 5MB limit`, 'warning');
+                return;
+            }
+
+            uploadFile(file);
         });
     }
-    
-    // Function to upload file to server
-    function uploadFile(file, index, total, callback) {
+
+    function uploadFile(file) {
         const formData = new FormData();
         formData.append('image', file);
+
+        const uploadId = Date.now() + Math.random();
         
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            showStatus('error', `File ${file.name} is too large. Maximum size is 5MB.`);
-            return;
-        }
-        
-        // Make AJAX request to upload
+        showUploadProgress(uploadId, file.name);
+
         $.ajax({
-            url: `${SERVER_URL}/upload`,
-            method: 'POST',
+            url: `${API_BASE}/upload`,
+            type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             xhr: function() {
                 const xhr = new window.XMLHttpRequest();
-                
-                // Upload progress
                 xhr.upload.addEventListener('progress', function(e) {
                     if (e.lengthComputable) {
-                        const percentComplete = Math.round((e.loaded / e.total) * 100);
-                        console.log(`Upload progress for ${file.name}: ${percentComplete}%`);
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        updateProgress(uploadId, percentComplete);
                     }
                 }, false);
-                
                 return xhr;
             },
             success: function(response) {
-                console.log('Upload success:', response);
-                
-                // Preview uploaded image
-                previewImage(file, response.filename);
-                
-                if (callback) callback();
+                console.log('✅ Upload success:', response);
+                if (response.success) {
+                    uploadedFiles.push(response);
+                    removeProgress(uploadId);
+                    showImagePreview(response);
+                    showStatus(`✅ ${file.name} uploaded successfully!`, 'success');
+                } else {
+                    removeProgress(uploadId);
+                    showStatus(`❌ Failed to upload ${file.name}: ${response.error}`, 'danger');
+                }
             },
             error: function(xhr, status, error) {
-                console.error('Upload error:', error);
-                let errorMsg = 'Server error.';
+                removeProgress(uploadId);
+                console.error('❌ Upload error:', {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    error: error,
+                    response: xhr.responseText
+                });
                 
+                let errorMsg = `❌ Failed to upload ${file.name}.`;
                 if (xhr.status === 0) {
-                    errorMsg = 'Cannot connect to server. Make sure the server is running on port 3000.';
-                } else if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMsg = xhr.responseJSON.error;
+                    errorMsg += ' Cannot connect to server. Make sure server is running on port 3000!';
+                } else if (xhr.status === 404) {
+                    errorMsg += ' Upload endpoint not found.';
+                } else if (xhr.status === 500) {
+                    errorMsg += ' Server error.';
+                } else {
+                    errorMsg += ` Error: ${xhr.statusText}`;
                 }
                 
-                showStatus('error', `Failed to upload ${file.name}. ${errorMsg}`);
+                showStatus(errorMsg, 'danger');
             }
         });
     }
-    
-    // Function to show upload status
-    function showStatus(type, message) {
-        uploadStatus.removeClass('upload-status success error loading');
-        
-        let icon = '';
-        if (type === 'success') {
-            icon = '<i class="fas fa-check-circle"></i> ';
-            uploadStatus.addClass('upload-status success');
-        } else if (type === 'error') {
-            icon = '<i class="fas fa-exclamation-circle"></i> ';
-            uploadStatus.addClass('upload-status error');
-        } else if (type === 'loading') {
-            icon = '<i class="fas fa-spinner fa-spin"></i> ';
-            uploadStatus.addClass('upload-status loading');
-        }
-        
-        uploadStatus.html(icon + message).fadeIn();
-        
-        // Auto hide after 5 seconds (except loading)
-        if (type !== 'loading') {
-            setTimeout(() => {
-                uploadStatus.fadeOut();
-            }, 5000);
-        }
+
+    function showUploadProgress(id, filename) {
+        const progressHtml = `
+            <div id="progress-${id}" class="card mb-3 fade-in" data-aos="fade-up">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span><i class="fas fa-file-image text-primary me-2"></i>${filename}</span>
+                        <span class="badge bg-info">Uploading...</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        uploadStatus.append(progressHtml);
     }
-    
-    // Function to preview uploaded image
-    function previewImage(file, filename) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const imageHtml = `
-                <div class="col-md-3 col-sm-6 mb-3 fade-in">
-                    <div class="image-preview-item">
-                        <img src="${e.target.result}" alt="${filename}" class="img-fluid rounded">
-                        <div class="image-overlay">
-                            <p class="text-white small mb-0">${filename}</p>
-                            <button class="btn btn-sm btn-danger mt-2 delete-image" data-filename="${filename}">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
+
+    function updateProgress(id, percent) {
+        $(`#progress-${id} .progress-bar`).css('width', percent + '%');
+    }
+
+    function removeProgress(id) {
+        $(`#progress-${id}`).fadeOut(300, function() {
+            $(this).remove();
+        });
+    }
+
+    function showImagePreview(data) {
+        const imageUrl = `${API_BASE}${data.url}`;
+        const previewHtml = `
+            <div class="col-md-4 col-sm-6 image-item" data-filename="${data.filename}" data-aos="zoom-in">
+                <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
+                    <div class="position-relative">
+                        <img src="${imageUrl}" class="card-img-top" alt="Uploaded image" 
+                             style="height: 250px; object-fit: cover;">
+                        <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 delete-image"
+                                data-filename="${data.filename}"
+                                style="border-radius: 50%; width: 40px; height: 40px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title text-truncate mb-2">
+                            <i class="fas fa-image text-primary me-2"></i>${data.filename}
+                        </h6>
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span><i class="fas fa-weight-hanging me-1"></i>${formatBytes(data.size)}</span>
+                            <span><i class="fas fa-file-code me-1"></i>${data.mimetype.split('/')[1].toUpperCase()}</span>
                         </div>
                     </div>
                 </div>
-            `;
-            
-            imagePreview.prepend(imageHtml);
-            
-            // Animate new image
-            imagePreview.find('.col-md-3:first').hide().fadeIn(600);
-        };
-        
-        reader.readAsDataURL(file);
+            </div>
+        `;
+        imagePreview.append(previewHtml);
     }
-    
-    // Delete image functionality
-    imagePreview.on('click', '.delete-image', function() {
+
+    // Delete image
+    $(document).on('click', '.delete-image', function() {
         const filename = $(this).data('filename');
-        const imageItem = $(this).closest('.col-md-3');
+        const imageItem = $(`.image-item[data-filename="${filename}"]`);
         
-        // Confirm deletion
-        if (confirm(`Are you sure you want to delete ${filename}?`)) {
-            // Send delete request to server
+        if (confirm('Are you sure you want to delete this image?')) {
             $.ajax({
-                url: `${SERVER_URL}/delete/${filename}`,
-                method: 'DELETE',
+                url: `${API_BASE}/delete/${filename}`,
+                type: 'DELETE',
                 success: function(response) {
-                    console.log('Delete success:', response);
-                    
-                    // Remove from preview
-                    imageItem.fadeOut(400, function() {
-                        $(this).remove();
-                    });
-                    
-                    showStatus('success', 'Image deleted successfully!');
+                    if (response.success) {
+                        imageItem.fadeOut(300, function() {
+                            $(this).remove();
+                        });
+                        uploadedFiles = uploadedFiles.filter(f => f.filename !== filename);
+                        showStatus('✅ Image deleted successfully!', 'success');
+                    } else {
+                        showStatus('❌ Failed to delete image', 'danger');
+                    }
                 },
-                error: function(xhr, status, error) {
-                    console.error('Delete error:', error);
-                    showStatus('error', 'Failed to delete image.');
+                error: function() {
+                    showStatus('❌ Failed to delete image', 'danger');
                 }
             });
         }
     });
-    
-    // Add image overlay and drag styles
-    const overlayCSS = `
-        <style>
-            .image-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.7);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                border-radius: 10px;
-                padding: 10px;
-                word-wrap: break-word;
-            }
-            
-            .image-preview-item:hover .image-overlay {
-                opacity: 1;
-            }
-            
-            .image-preview-item {
-                position: relative;
-                overflow: hidden;
-                border-radius: 10px;
-            }
-            
-            .image-preview-item img {
-                width: 100%;
-                height: 250px;
-                object-fit: cover;
-            }
-            
-            .dragover {
-                border-color: #50C878 !important;
-                background: rgba(80, 200, 120, 0.1) !important;
-                transform: scale(1.02);
-                transition: all 0.3s ease;
-            }
-            
-            .upload-status {
-                padding: 15px;
-                border-radius: 5px;
-                margin-top: 15px;
-                text-align: center;
-                font-weight: bold;
-            }
-            
-            .upload-status.success {
-                background-color: #d4edda;
-                color: #155724;
-                border: 1px solid #c3e6cb;
-            }
-            
-            .upload-status.error {
-                background-color: #f8d7da;
-                color: #721c24;
-                border: 1px solid #f5c6cb;
-            }
-            
-            .upload-status.loading {
-                background-color: #d1ecf1;
-                color: #0c5460;
-                border: 1px solid #bee5eb;
-            }
-            
-            .drop-zone {
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-            
-            .drop-zone:hover {
-                border-color: #007bff !important;
-                background: rgba(0, 123, 255, 0.05) !important;
-            }
-        </style>
-    `;
-    
-    $('head').append(overlayCSS);
-    
-    // Log initialization
-    console.log('✓ Upload handler initialized successfully!');
-    console.log('✓ Server URL:', SERVER_URL);
-    console.log('✓ Drag & drop ready');
-    console.log('⚠ Make sure Node.js server is running: npm start');
+
+    function showStatus(message, type) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        uploadStatus.prepend(alertHtml);
+        
+        setTimeout(function() {
+            uploadStatus.find('.alert').first().fadeOut(300, function() {
+                $(this).remove();
+            });
+        }, 5000);
+    }
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
 });

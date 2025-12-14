@@ -1,1 +1,24 @@
+<<<<<<< HEAD
+node_modules/ 
+=======
+.env
+.env.local
+.env.production
+.env.development
+*.env
+node_modules/
+server/node_modules/
 .vercel
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*.log
+npm-debug.log*
+dist/
+build/
+upload_images/.env 
+>>>>>>> 38b153e8ecf8bd324cdb78589427643ad64d30c5
+.env 
