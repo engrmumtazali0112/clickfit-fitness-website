@@ -7,3 +7,4 @@ server/node_modules/
 .vercel
 upload_images/*
 !upload_images/.gitkeep
+.env*.local

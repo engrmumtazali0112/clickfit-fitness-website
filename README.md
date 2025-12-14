@@ -15,6 +15,59 @@
 
 </div>
 
+
+### 🌐 **[LIVE DEMO →](https://clickfit-5ezpxcswc-engrmumtazali0112s-projects.vercel.app/)**
+
+<a href="https://clickfit-5ezpxcswc-engrmumtazali0112s-projects.vercel.app/" target="_blank">
+<img src="https://img.shields.io/badge/🎯_CLICK_HERE_TO_VIEW_LIVE_DEMO-4CAF50?style=for-the-badge&labelColor=2196F3&color=4CAF50" alt="Live Demo Button" height="50">
+</a>
+
+---
+
+**✨ [Features](#-features) • 🛠️ [Tech Stack](#-tech-stack) • 📦 [Installation](#-installation) • 🎬 [Demo](#-quick-demo-script) • 📸 [Screenshots](#-screenshots) • 📊 [API](#-api-endpoints)**
+
+</div>
+
+---
+
+## 🎥 Live Demo & Preview
+
+<div align="center">
+
+### 🌟 **Experience ClickFit in Action**
+
+<table>
+<tr>
+<td align="center" width="50%">
+
+### 🖥️ **Desktop View**
+<a href="https://clickfit-5ezpxcswc-engrmumtazali0112s-projects.vercel.app/" target="_blank">
+<img src="https://img.shields.io/badge/View_Desktop_Demo-2196F3?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Desktop Demo">
+</a>
+
+**Fully Responsive Design**
+- ✅ Bootstrap 5 Grid System
+- ✅ Smooth CSS3 Animations
+- ✅ Interactive UI Elements
+
+</td>
+<td align="center" width="50%">
+
+### 📱 **Mobile View**
+<a href="https://clickfit-5ezpxcswc-engrmumtazali0112s-projects.vercel.app/" target="_blank">
+<img src="https://img.shields.io/badge/View_Mobile_Demo-4CAF50?style=for-the-badge&logo=android&logoColor=white" alt="Mobile Demo">
+</a>
+
+**Mobile-First Approach**
+- ✅ Touch-Optimized Interface
+- ✅ Swipe Gestures Support
+- ✅ Adaptive Layouts
+
+</td>
+</tr>
+</table>
+
+---
 ---
 
 ## 📋 Table of Contents

@@ -1,0 +1,21 @@
+node_modules/
+server/node_modules/
+upload_images/*
+!upload_images/.gitkeep
+.env
+.env.local
+.env.production
+*.env
+.git
+.gitignore
+*.log
+.DS_Store
+Thumbs.db
+*.sql
+*.JPG
+*.png
+*.jpg
+*.jpeg
+*.gif
+CHeck HR DEMO.txt
+README.md
