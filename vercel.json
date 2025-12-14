@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/upload_images/(.*)",
+      "dest": "/upload_images/$1"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/server.js"
+    },
+    {
+      "src": "/upload",
+      "dest": "/server/server.js"
+    },
+    {
+      "src": "/delete/(.*)",
+      "dest": "/server/server.js"
+    },
+    {
+      "src": "/health",
+      "dest": "/server/server.js"
+    },
+    {
+      "src": "/(.*\\.(css|js|jpg|jpeg|png|gif|svg|ico|webp))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/upload.html",
+      "dest": "/upload.html"
+    },
+    {
+      "src": "/api-test.html",
+      "dest": "/api-test.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "PORT": "3000",
+    "DATABASE_HOST": "localhost",
+    "DATABASE_USERNAME": "clickfit_user",
+    "DATABASE_PASSWORD": "ClickFit2024!",
+    "DATABASE_NAME": "clickfit_db"
+  }
+}

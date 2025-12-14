@@ -1,7 +1,10 @@
 // api/index.js - Minimal Vercel serverless function
 const express = require('express');
 const cors = require('cors');
+// api/index.js - Vercel Serverless Entry Point
+const app = require('../server/server');
 
+module.exports = app;
 const app = express();
 app.use(cors());
 app.use(express.json());
