@@ -130,16 +130,17 @@ The ClickFit server is fully operational on `http://localhost:3001` with all fea
 ✅ MySQL connected
 ✅ Users table exists
 🚀 SERVER STARTED SUCCESSFULLY!
-📍 http://localhost:3001
+📍 http://localhost:3000
 📊 Database: ✅ Connected
 📁 Upload: ✅ Enabled (Local Storage)
 📂 Upload Directory: D:\strip\FullStackProject\clickfit\upload_images
 
 📄 Available Routes:
-   ✅ http://localhost:3001/ (Main page)
-   ✅ http://localhost:3001/upload.html (Upload test page)
-   ✅ http://localhost:3001/api/users
-   ✅ http://localhost:3001/health
+   ✅ http://localhost:3000/ (Main page)
+   ✅ http://localhost:3000/upload.html (Upload test page)
+   ✅ http://localhost:3000/api-test.html (API testing dashboard)
+   ✅ http://localhost:3000/api/users
+   ✅ http://localhost:3000/health
 
 💡 Ready to accept uploads!
 ✅ File uploaded: image-1765687207726-22569257.JPG
