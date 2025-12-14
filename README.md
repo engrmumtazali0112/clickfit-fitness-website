@@ -445,54 +445,140 @@ fetch('/upload', {
 
 ---
 
-## 📸 Screenshots
+## 🎥 Live Demo & API Verification
 
-### 🗄️ Database Setup & Verification
+### 🚀 Server Status - Successfully Running!
 
-#### Part 1: Database Setup (MySQL Requirement)
-![Database Setup](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/PART%201DATABASE%20SETUP%20(MySQL%20Requirement).JPG)
+![Check All API](https://github.com/user-attachments/assets/676f6695-1770-41c6-9b24-0264b97b39a7)
 
-#### Users Table Creation with All Required Columns
-![Users Table Creation](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/USERS%20TABLE%20CREATION2.JPG)
+The ClickFit server is fully operational on `http://localhost:3001` with all features enabled. The comprehensive API tester interface above shows all available endpoints and their connection status.
 
-#### Stored Procedures Verification (6 Procedures Created)
-![Verify Stored Procedures](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/VERIFY%20STORED%20PROCEDURES3.JPG)
+#### ✅ Server Console Output
+```
+✅ Local file upload configured
+✅ MySQL connected
+✅ Users table exists
+🚀 SERVER STARTED SUCCESSFULLY!
+📍 http://localhost:3001
+📊 Database: ✅ Connected
+📁 Upload: ✅ Enabled (Local Storage)
+📂 Upload Directory: D:\strip\FullStackProject\clickfit\upload_images
 
-#### Stored Procedure Test - User Insertion
-![Stored Procedure Test](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/STORED%20PROCEDURE%20TEST4.JPG)
+📄 Available Routes:
+   ✅ http://localhost:3001/ (Main page)
+   ✅ http://localhost:3001/upload.html (Upload test page)
+   ✅ http://localhost:3001/api/users
+   ✅ http://localhost:3001/health
 
-#### All Users in Database Display
-![All Users in Database](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/All%20Users%20in%20Database5.JPG)
-
-#### Live Demonstration - Full Workflow
-![Database Workflow](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/ShowAllAdminTerminal.JPG)
-
-### 📊 Additional Database Screenshots
-
-#### Database Statistics Overview
-![Database Statistics](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/DATABASE%20STATISTICSS8.JPG)
-
-#### Testing Additional Procedures
-![Testing Additional Procedures](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/Testing%20Additional%20Procedures7.sql)
-
-#### Inserting Test User via CALL addUser()
-![Inserting Test User](https://raw.githubusercontent.com/engrmumtazali0112/clickfit-fitness-website/main/Query/Inserting%20test%20user%20via%20CALL%20addUser3.sql)
-
-### 💻 Website Features
-
-#### Homepage with Animations
-![Homepage](https://via.placeholder.com/800x400/667eea/ffffff?text=ClickFit+Homepage+with+CSS+Animations)
-
-#### Drag & Drop Image Upload Interface
-![Image Upload](https://via.placeholder.com/800x400/50C878/ffffff?text=Drag+%26+Drop+Image+Upload+Feature)
-
-#### Responsive Mobile View
-![Mobile View](https://via.placeholder.com/400x600/9333ea/ffffff?text=Mobile+Responsive+Design)
-
-#### Numbers API Integration Display
-![API Integration](https://via.placeholder.com/800x400/f59e0b/ffffff?text=Numbers+API+AJAX+Integration)
+💡 Ready to accept uploads!
+✅ File uploaded: image-1765687207726-22569257.JPG
+```
 
 ---
+
+### 📊 API Endpoints - Live & Verified
+
+#### 1️⃣ Root Endpoint - Application Home
+**URL:** `http://localhost:3000/`
+**Method:** `GET`
+**Status:** ✅ Operational
+
+![ClickFit API Live & Running](https://github.com/user-attachments/assets/7ad3d83c-83ae-4d63-a0b3-fb2e89d6ad63)
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "ClickFit API is running",
+  "timestamp": "2025-12-14T03:30:05.526Z",
+  "features": {
+    "database": true,
+    "cloudinary": false,
+    "upload": false
+  }
+}
+```
+
+**What this shows:**
+- ✅ Server is running and responsive
+- ✅ Database connection is active
+- ✅ API is ready to handle requests
+- ✅ Timestamp confirms real-time operation
+
+---
+
+#### 2️⃣ Health Check Endpoint - System Status
+**URL:** `http://localhost:3001/health`
+**Method:** `GET`
+**Status:** ✅ Operational
+
+![Health Endpoint](https://github.com/user-attachments/assets/7f695633-7480-4f60-83e0-48df73bc9b1c)
+
+**Response:**
+```json
+{
+  "success": true,
+  "status": "healthy",
+  "database": true,
+  "upload": true,
+  "port": "3001"
+}
+```
+
+**Health Check Details:**
+- ✅ Server status: Healthy
+- ✅ Database connection: Active
+- ✅ Upload system: Operational
+- ✅ Running on port: 3001
+
+---
+
+#### 3️⃣ Users API - Database Integration
+**URL:** `http://localhost:3000/api/users`
+**Method:** `GET`
+**Status:** ✅ Operational
+
+![API Users Endpoint](https://github.com/user-attachments/assets/b24947b9-4720-497a-87bb-4b5d4220ab6d)
+
+**Live Response:**
+```json
+{
+  "success": true,
+  "count": 16,
+  "users": [
+    {
+      "userId": 33,
+      "email": "hr.demo@company.com",
+      "type": "admin",
+      "active": 1,
+      "created_at": "2025-12-14T04:41:18.000Z"
+    },
+    {
+      "userId": 34,
+      "email": "john.doe@clickfit.com",
+      "type": "user",
+      "active": 1,
+      "created_at": "2025-12-14T04:41:18.000Z"
+    },
+    {
+      "userId": 35,
+      "email": "sarah.trainer@clickfit.com",
+      "type": "trainer",
+      "active": 1,
+      "created_at": "2025-12-14T04:41:18.000Z"
+    }
+    // ... more users
+  ]
+}
+```
+
+**API Features Demonstrated:**
+- ✅ RESTful endpoint structure
+- ✅ JSON response format
+- ✅ Real-time database queries
+- ✅ Proper data serialization
+- ✅ Count of total users
+- ✅ Array of user objects with all fields
 
 ## ✅ Database Verification
 
