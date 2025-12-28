@@ -1019,7 +1019,7 @@ copies or substantial portions of the Software.
 
 [![GitHub](https://img.shields.io/badge/GitHub-engrmumtazali0112-181717?style=for-the-badge&logo=github)](https://github.com/engrmumtazali0112)
 [![Email](https://img.shields.io/badge/Email-engrmumtazali01@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:engrmumtazali01@gmail.com)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/mumtazali)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/mumtazali12)
 
 **Full-Stack Developer | Fitness Enthusiast | Open Source Contributor**
 
